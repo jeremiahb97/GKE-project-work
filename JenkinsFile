@@ -1,0 +1,66 @@
+pipeline {
+  agent any
+
+  environment {
+    PROJECT_ID = 'alien-drake-271918'
+    REGION = 'us-central1'
+    CLUSTER = 'my-cluster'
+    IMAGE_NAME = 'my-app'
+    IMAGE_PATH = "us-central1-docker.pkg.dev/${PROJECT_ID}/my-repo/${IMAGE_NAME}"
+    HELM_RELEASE = 'my-app'
+    NAMESPACE = 'default'
+  }
+
+  stages {
+    stage('Clone') {
+      steps {
+        git 'https://github.com/jeremiahb97/docker-image-code.git'
+      }
+    }
+
+    stage('Docker Build') {
+      steps {
+        script {
+          docker.build("${IMAGE_PATH}:latest")
+        }
+      }
+    }
+
+    stage('Push to Artifact Registry') {
+      steps {
+        withCredentials([file(credentialsId: 'gcp-sa-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+          sh '''
+            gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+            gcloud config set project $PROJECT_ID
+            gcloud auth configure-docker us-central1-docker.pkg.dev
+            docker push $IMAGE_PATH:latest
+          '''
+        }
+      }
+    }
+
+    stage('Configure kubectl') {
+      steps {
+        withCredentials([file(credentialsId: 'gcp-sa-key', variable: 'GOOGLE_APPLICATION_CREDENTIALS')]) {
+          sh '''
+            gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+            gcloud config set project $PROJECT_ID
+            gcloud container clusters get-credentials $CLUSTER --region $REGION
+          '''
+        }
+      }
+    }
+
+    stage('Deploy to GKE using Helm') {
+      steps {
+        sh '''
+          helm upgrade --install $HELM_RELEASE ./my-app \
+            --set image.repository=$IMAGE_PATH \
+            --set image.tag=latest \
+            --namespace=$NAMESPACE \
+            --create-namespace
+        '''
+      }
+    }
+  }
+}

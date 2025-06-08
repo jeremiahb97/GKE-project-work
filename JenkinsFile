@@ -54,7 +54,7 @@ pipeline {
     stage('Deploy to GKE using Helm') {
       steps {
         sh '''
-          helm upgrade --install $HELM_RELEASE ./chart/my-app \
+          helm upgrade --install $HELM_RELEASE charts/my-app \
             --set image.repository=$IMAGE_PATH \
             --set image.tag=latest \
             --namespace=$NAMESPACE \

@@ -1,5 +1,5 @@
 apiVersion: v2
-name: main.py
+name: my-app
 description: A Helm chart to deploy my Flask app to GKE
 type: application
 version: 0.1.0

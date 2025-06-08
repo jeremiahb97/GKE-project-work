@@ -14,7 +14,7 @@ pipeline {
   stages {
     stage('Clone') {
       steps {
-        git 'https://github.com/jeremiahb97/docker-image-code.git'
+        git 'https://github.com/jeremiahb97/GKE-project-work.git'
       }
     }
 

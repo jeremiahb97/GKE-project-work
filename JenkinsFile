@@ -4,7 +4,7 @@ pipeline {
   environment {
     PROJECT_ID = 'alien-drake-271918'
     REGION = 'us-central1'
-    CLUSTER = 'my-cluster'
+    CLUSTER = 'gke-cluster'
     IMAGE_NAME = 'my-app'
     IMAGE_PATH = "us-central1-docker.pkg.dev/${PROJECT_ID}/my-repo/${IMAGE_NAME}"
     HELM_RELEASE = 'my-app'

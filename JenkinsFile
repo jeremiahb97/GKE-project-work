@@ -6,7 +6,7 @@ pipeline {
     REGION = 'us-central1'
     CLUSTER = 'gke-cluster'
     IMAGE_NAME = 'my-app'
-    IMAGE_PATH = "us-central1-docker.pkg.dev/${PROJECT_ID}/my-repo/${IMAGE_NAME}"
+    IMAGE_PATH = "us-central1-docker.pkg.dev/${PROJECT_ID}/gke-repo/${IMAGE_NAME}"
     HELM_RELEASE = 'my-app'
     NAMESPACE = 'default'
   }
